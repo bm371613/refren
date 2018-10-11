@@ -1,9 +1,0 @@
-- rr "foo bar" "spam egg"
-- default formats:
-  - XxYy
-  - xxYy
-  - XX_YY
-  - xx_yy
-  - XxCC
-  - xxCC
-- handle plurals by default, allow overriding plural forms and disabling

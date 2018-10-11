@@ -1,8 +1,8 @@
 extern crate clap;
 
 mod name;
-mod replace;
 mod style;
+mod transform;
 
 use std::io;
 use std::process;
@@ -10,15 +10,15 @@ use std::process;
 use clap::{App, Arg};
 
 use name::Name;
-use replace::default_replacer;
 use style::NamingStyle;
+use transform::default_transformer;
 
 fn print_error_and_exit(message: &str) -> ! {
     eprintln!("{}", message);
     process::exit(1);
 }
 
-fn main() -> io::Result<()> {
+fn main() {
     let matches = App::new("rr: refactor/rename")
         .version("0.0")
         .author("Bartosz Marcinkowski <bm371613@gmail.com>")
@@ -42,10 +42,12 @@ fn main() -> io::Result<()> {
     if old_name.is_empty() {
         print_error_and_exit("OLD_NAME is empty")
     }
-    let replacer = default_replacer(
+    let transformer = default_transformer(
         style::STYLES
             .iter()
             .map(|s| (s.format(old_name.singular()), s.format(new_name.singular()))),
     );
-    replacer.transform(&mut io::stdin(), &mut io::stdout())
+    transformer
+        .transform(&mut io::stdin(), &mut io::stdout())
+        .unwrap_or_else(|e| print_error_and_exit(&e.to_string()));
 }
