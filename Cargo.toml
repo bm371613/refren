@@ -2,6 +2,7 @@
 name = "rr"
 version = "0.1.0"
 authors = ["Bartosz Marcinkowski <bm371613@gmail.com>"]
+description = "Facilitates refactoring/renaming"
 
 [dependencies]
 clap = "2.32.0"
