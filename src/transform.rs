@@ -187,6 +187,30 @@ mod aho_corasick {
     }
 
     #[test]
+    fn test_suffix_link() {
+        let transformer = Transformer::from_map(vec![
+            ("abc".to_owned(), "x".to_owned()),
+            ("bbc".to_owned(), "y".to_owned()),
+        ]);
+        let src: Vec<u8> = "abbc".bytes().collect();
+        let mut dst: Vec<u8> = Vec::new();
+        assert_eq!(transformer.transform(&mut &src[..], &mut dst).unwrap(), ());
+        assert_eq!(String::from_utf8(dst).unwrap(), "ay");
+    }
+
+    #[test]
+    fn test_dict_suffix_link() {
+        let transformer = Transformer::from_map(vec![
+            ("abcd".to_owned(), "x".to_owned()),
+            ("bc".to_owned(), "y".to_owned()),
+        ]);
+        let src: Vec<u8> = "abce".bytes().collect();
+        let mut dst: Vec<u8> = Vec::new();
+        assert_eq!(transformer.transform(&mut &src[..], &mut dst).unwrap(), ());
+        assert_eq!(String::from_utf8(dst).unwrap(), "aye");
+    }
+
+    #[test]
     fn test_utf8() {
         let transformer = Transformer::from_map(vec![
             ("aa".to_owned(), "aaa".to_owned()),
