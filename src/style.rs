@@ -74,6 +74,12 @@ pub static STYLES: &[SimpleNamingStyle] = &[
     SimpleNamingStyle {
         first_case: Case::Lower,
         other_case: Case::Title,
+        upper_acronyms: false,
+        separator: std::borrow::Cow::Borrowed(""),
+    },
+    SimpleNamingStyle {
+        first_case: Case::Lower,
+        other_case: Case::Title,
         upper_acronyms: true,
         separator: std::borrow::Cow::Borrowed(""),
     },
@@ -81,8 +87,21 @@ pub static STYLES: &[SimpleNamingStyle] = &[
     SimpleNamingStyle {
         first_case: Case::Title,
         other_case: Case::Title,
+        upper_acronyms: false,
+        separator: std::borrow::Cow::Borrowed(""),
+    },
+    SimpleNamingStyle {
+        first_case: Case::Title,
+        other_case: Case::Title,
         upper_acronyms: true,
         separator: std::borrow::Cow::Borrowed(""),
+    },
+    // kebab-case
+    SimpleNamingStyle {
+        first_case: Case::Lower,
+        other_case: Case::Lower,
+        upper_acronyms: false,
+        separator: std::borrow::Cow::Borrowed("-"),
     },
 ];
 
