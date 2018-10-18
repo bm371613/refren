@@ -5,8 +5,12 @@ rather than a specific variable or class. So, if you decide that "JS example" sh
 `rr` will do it for you, aware of different code styles.
 
 ## Simple example
-```
+
+`
 $ cat src/lib.js
+`
+
+```js
 const JS_EXAMPLE_STATIC_CONST = 44
 
 function jsExampleFunction(firstJsExampleArgument, secondJsExampleArgument) {
@@ -15,8 +19,13 @@ function jsExampleFunction(firstJsExampleArgument, secondJsExampleArgument) {
 module.exports = {
     jsExampleFunction
 }
+```
 
+`
 $ cat src/lib.js | rr 'JS example' 'javascript dummy'
+`
+
+```js
 const JAVASCRIPT_DUMMY_STATIC_CONST = null
 
 function javascriptDummyFunction(firstJavascriptDummyArgument, secondJavascriptDummyArgument) {
@@ -29,31 +38,8 @@ module.exports = {
 
 ## Using together with the `find` command
 
-```
+`rr` can be easily used together with the `find` command like the following example:
+
+`
 $ find src -name "*.js" -exec rr "JS example" "javascript dummy" --file {} \;
-
-$ git diff
-diff --git a/src/cli.js b/src/cli.js
---- a/src/cli.js
-+++ b/src/cli.js
-@@ -1,3 +1,3 @@
- const lib = require('./lib.js')
-
--var jsExampleVariable = lib.jsExampleFunction()
-+var javascriptDummyVariable = lib.javascriptDummyFunction()
-diff --git a/src/lib.js b/src/lib.js
---- a/src/lib.js
-+++ b/src/lib.js
-@@ -1,8 +1,8 @@
--const JS_EXAMPLE_STATIC_CONST = null
-+const JAVASCRIPT_DUMMY_STATIC_CONST = null
-
--function jsExampleFunction(firstJsExampleArgument, secondJsExampleArgument) {
-+function javascriptDummyFunction(firstJavascriptDummyArgument, secondJavascriptDummyArgument) {
- }
-
- module.exports = {
--    jsExampleFunction
-+    javascriptDummyFunction
- }
-```
+`
