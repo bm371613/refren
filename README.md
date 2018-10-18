@@ -38,7 +38,7 @@ module.exports = {
 
 ## Using together with the `find` command
 
-`rr` can be easily used together with the `find` command like the following example:
+`rr` can be easily used together with the `find` command:
 
 `
 $ find src -name "*.js" -exec rr "JS example" "javascript dummy" --file {} \;
