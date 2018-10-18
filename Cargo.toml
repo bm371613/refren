@@ -1,5 +1,5 @@
 [package]
-name = "rr"
+name = "refren"
 version = "0.1.0"
 authors = ["Bartosz Marcinkowski <bm371613@gmail.com>"]
 description = "Facilitates refactoring/renaming"
