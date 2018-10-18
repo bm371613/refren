@@ -41,5 +41,5 @@ module.exports = {
 `refren` can be easily used together with the `find` command:
 
 `
-$ find src -name "*.js" -exec refren "JS example" "javascript dummy" --file {} \;
+$ find src -name "*.js" | xargs refren "JS example" "javascript dummy"
 `
