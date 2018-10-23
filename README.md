@@ -44,3 +44,9 @@ module.exports = {
 `
 $ find src -name "*.js" | xargs refren "JS example" "javascript dummy"
 `
+
+## Installation
+
+```
+cargo install refren
+```
