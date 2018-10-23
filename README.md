@@ -1,4 +1,5 @@
 # refren: refactor/rename
+[![Build Status](https://travis-ci.org/sharkdp/fd.svg?branch=master)](https://travis-ci.org/bm371613/refren)
 
 The `refren` command facilitates refactoring/renaming in cases when you want to rename a concept that appears in your
 code rather than a specific variable or class. So, if you decide that "JS example" should be renamed to
