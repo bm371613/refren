@@ -2,7 +2,21 @@
 name = "refren"
 version = "0.1.0"
 authors = ["Bartosz Marcinkowski <bm371613@gmail.com>"]
+
+categories = ["command-line-utilities"]
 description = "A language agnostic, code-style aware, refactoring/renaming tool."
+homepage = "https://github.com/bm371613/refren"
+keywords = ["refactor", "rename", "replace", "file", "tool"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/bm371613/refren"
+
+[[bin]]
+name = "refren"
+path = "src/main.rs"
 
 [dependencies]
 clap = "2.32.0"
+
+[badges.travis-ci]
+repository = "bm371613/refren"
