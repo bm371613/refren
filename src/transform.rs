@@ -247,6 +247,20 @@ mod aho_corasick {
         assert_eq!(String::from_utf8(dst).unwrap(), "Whaaaat? 😊\na cat");
     }
 
+    #[test]
+    #[ignore]
+    fn test_match_longest() {
+        let transformer = Transformer::from_map(vec![
+            ("a".to_owned(), "1".to_owned()),
+            ("aaa".to_owned(), "3".to_owned()),
+            ("aaaaa".to_owned(), "5".to_owned()),
+        ]);
+        let src: Vec<u8> = "aaaaaab".bytes().collect();
+        let mut dst: Vec<u8> = Vec::new();
+        assert_eq!(transformer.transform(&mut &src[..], &mut dst).unwrap(), ());
+        assert_eq!(String::from_utf8(dst).unwrap(), "51b");
+    }
+
 }
 
 pub fn default_transformer<I: IntoIterator<Item = (String, String)>>(map: I) -> Box<Transform> {
