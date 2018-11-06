@@ -134,52 +134,76 @@ mod aho_corasick {
         }
     }
 
+    struct Transformation<'a, 'b, 'c> {
+        transformer: &'a Transformer,
+        buffer: &'b str,
+        writer: &'c mut io::Write,
+        char_ixs: Vec<usize>,
+        output_position: usize,
+        node_id: NodeId,
+    }
+
+    impl <'a, 'b, 'c> Transformation<'a, 'b, 'c> {
+        fn new(transformer: &'a Transformer, buffer: &'b str, writer: &'c mut io::Write) -> Self {
+            Transformation {
+                transformer,
+                buffer,
+                writer,
+                char_ixs: buffer
+                    .char_indices()
+                    .map(|(i, _)| i)
+                    .chain(once(buffer.len()))
+                    .collect(),
+                output_position: 0,
+                node_id: 0,
+            }
+        }
+
+        fn run(mut self) -> io::Result<()> {
+            for (i, c) in self.buffer.chars().enumerate() {
+                loop {
+                    if let Some(&child_id) = self.transformer.tree.nodes[self.node_id].children.get(&c) {
+                        self.node_id = child_id;
+                        break;
+                    }
+                    match self.transformer.tree.nodes[self.node_id].suffix_link {
+                        Some(suffix_link) => {
+                            self.node_id = suffix_link;
+                        }
+                        None => break,
+                    }
+                }
+                let in_dict_node_maybe = if self.transformer.tree.nodes[self.node_id].in_dict {
+                    Some(self.node_id)
+                } else {
+                    self.transformer.tree.nodes[self.node_id].in_dict_suffix_link
+                };
+                if let Some(in_dict_node) = in_dict_node_maybe {
+                    let depth = self.transformer.tree.nodes[in_dict_node].depth as usize;
+                    let start_position = self.char_ixs[i + 1 - depth];
+                    let end_position = self.char_ixs[i + 1];
+                    self.writer.write(self.buffer[self.output_position..start_position].as_bytes())?;
+                    self.writer.write(
+                        self.transformer.map
+                            .get(&self.buffer[start_position..end_position])
+                            .unwrap()
+                            .as_bytes(),
+                    )?;
+                    self.output_position = end_position;
+                    self.node_id = ROOT_ID;
+                }
+            }
+            self.writer.write(self.buffer[self.output_position..].as_bytes())?;
+            Ok(())
+        }
+    }
+
     impl Transform for Transformer {
         fn transform(&self, reader: &mut io::Read, writer: &mut io::Write) -> io::Result<()> {
             let mut line = String::new();
             let mut buf_reader = io::BufReader::new(reader);
             while buf_reader.read_line(&mut line)? > 0 {
-                let char_ixs: Vec<usize> = line
-                    .char_indices()
-                    .map(|(i, _)| i)
-                    .chain(once(line.len()))
-                    .collect();
-                let mut output_position = 0;
-                let mut node_id = ROOT_ID;
-                for (i, c) in line.chars().enumerate() {
-                    loop {
-                        if let Some(&child_id) = self.tree.nodes[node_id].children.get(&c) {
-                            node_id = child_id;
-                            break;
-                        }
-                        match self.tree.nodes[node_id].suffix_link {
-                            Some(suffix_link) => {
-                                node_id = suffix_link;
-                            }
-                            None => break,
-                        }
-                    }
-                    let in_dict_node_maybe = if self.tree.nodes[node_id].in_dict {
-                        Some(node_id)
-                    } else {
-                        self.tree.nodes[node_id].in_dict_suffix_link
-                    };
-                    if let Some(in_dict_node) = in_dict_node_maybe {
-                        let depth = self.tree.nodes[in_dict_node].depth as usize;
-                        let start_position = char_ixs[i + 1 - depth];
-                        let end_position = char_ixs[i + 1];
-                        writer.write(line[output_position..start_position].as_bytes())?;
-                        writer.write(
-                            self.map
-                                .get(&line[start_position..end_position])
-                                .unwrap()
-                                .as_bytes(),
-                        )?;
-                        output_position = end_position;
-                        node_id = ROOT_ID;
-                    }
-                }
-                writer.write(line[output_position..].as_bytes())?;
+                Transformation::new(&self, &line, writer).run()?;
                 line.clear();
             }
             Ok(())
